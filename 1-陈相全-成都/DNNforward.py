@@ -63,6 +63,7 @@ print(torch_model.state_dict())
 torch_model_w1 = torch_model.state_dict()["layer1.weight"].numpy()
 torch_model_w2 = torch_model.state_dict()["layer2.weight"].numpy()
 
+#增加了bias值情况下的预测
 torch_model_bias1 = torch_model.state_dict()["layer1.bias"].numpy()
 torch_model_bias2 = torch_model.state_dict()["layer2.bias"].numpy()
 

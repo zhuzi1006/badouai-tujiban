@@ -58,15 +58,21 @@ def build_vocab():
 #从所有字中选取sentence_length个字
 #反之为负样本
 def build_sample(vocab, sentence_length):
-    #随机从字表选取sentence_length个字，可能重复
+
+    #随机从字表选取sentence_length个字添加进x这个列表，可能重复
+    #for _ in range(sentence_length)是循环几次
+    #random.choice(list(vocab.keys()))是把vocab键值转换为列表后，random添加进x
     x = [random.choice(list(vocab.keys())) for _ in range(sentence_length)]
 
     #指定哪些字出现时为正样本
+    #修改了正样本条件
     if set("cxq") & set(x):
         y = 1
     #指定字都未出现，则为负样本
     else:
         y = 0
+
+    #循环x列表中的元素，vocab.get(word, vocab['unk'])的意思是如果vocab里面没有word这个元素，那么添加一个'unk'进x去
     x = [vocab.get(word, vocab['unk']) for word in x]   #将字转换成序号，为了做embedding
     return x, y
 
