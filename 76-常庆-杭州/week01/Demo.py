@@ -59,7 +59,7 @@ def build_sample(vocab, sentence_length):
     #随机从字表选取sentence_length个字，可能重复
     x=np.random.choice(list(vocab.keys()),6)
     #指定哪些字出现时为正样本
-    m= set(x) & set("ac")   #修改正样本生成条件为：当同时出现ab字符时为正样本；但是训练结果错误.且预测率达不到100%
+    m= set(x) & set("ac")   #修改正样本生成条件为：当同时出现ab字符时为正样本。由于生成正负样本比例失衡，训练过程重采样。
     n= [i for i in m]
     if len(n) == 2:
         y = 1
@@ -90,7 +90,7 @@ def build_model(vocab, char_dim, sentence_length):
 def evaluate(model, vocab, sample_length):
     model.eval()
     x, y = build_dataset(200, vocab, sample_length)   #建立200个用于测试的样本
-    print("本次预测集中共有%d个正样本，%d个负样本"%(sum(y), 200 - sum(y)))
+    print("本次预测集中共有%d个正样本，%d个负样本"%(sum(y), 200- sum(y)))
     correct, wrong = 0, 0
     with torch.no_grad():
         y_pred = model(x)      #模型预测
@@ -120,6 +120,21 @@ def main():
         watch_loss = []
         for batch in range(int(train_sample / batch_size)):  #进行50次喂入数据，然后求其平均loss
             x, y = build_dataset(batch_size, vocab, sentence_length) #构建一组训练样本
+            fu = []  # 储存负样本对应的索引
+            zheng = []  # 储存正样本对应的索引
+            for i, h in enumerate(y):
+                if h == 0:
+                    fu.append(i)
+                else:
+                    zheng.append(i)
+            index = random.sample(fu, len(y[y == 1]))  # 取和正样本相同个数的索引的负样本
+            x_zheng = x[np.array(zheng)]
+            for m in index:   #将负样本的索引添加到正样本索引之后
+                zheng.append(m)
+            x = x[np.array(zheng)]
+            y = [[1]] * len(x_zheng) + [[0]] * len(index)
+            x=torch.LongTensor(x)
+            y=torch.FloatTensor(y)
             optim.zero_grad()    #梯度归零
             loss = model(x, y)   #计算loss
             loss.backward()      #计算梯度
