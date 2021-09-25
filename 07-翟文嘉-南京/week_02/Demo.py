@@ -23,8 +23,8 @@ class TorchModel(nn.Module):
         self.pool = nn.AvgPool1d(sentence_length)
         self.classify = nn.Linear(input_dim, 1)
         self.activation = torch.sigmoid     #sigmoid做激活函数
-        self.dropout = nn.Dropout(0.1)
-        self.loss = nn.functional.mse_loss  #loss采用均方差损失
+        self.dropout = nn.Dropout(0.2)      # 修改为 0.2
+        self.loss = nn.functional.binary_cross_entropy  #loss采用均方差损失
 
 
     #当输入真实标签，返回loss值；无真实标签，返回预测值
@@ -46,7 +46,7 @@ class TorchModel(nn.Module):
 #{"a":1, "b":2, "c":3...}
 #abc -> [1,2,3]
 def build_vocab():
-    chars = "abcdefghijklmnopqrstuvwxyz"  #字符集
+    chars = "abcdefghijklmnopqrstuvwxyz0123456789"  #字符集
     vocab = {}
     for index, char in enumerate(chars):
         vocab[char] = index + 1   #每个字对应一个序号
@@ -60,7 +60,7 @@ def build_sample(vocab, sentence_length):
     #随机从字表选取sentence_length个字，可能重复
     x = [random.choice(list(vocab.keys())) for _ in range(sentence_length)]
     #指定哪些字出现时为正样本
-    if set("abc") & set(x):
+    if set("0123456789") & set(x):
         y = 1
     #指定字都未出现，则为负样本
     else:
@@ -109,7 +109,7 @@ def main():
     batch_size = 20       #每次训练样本个数
     train_sample = 1000   #每轮训练总共训练的样本总数
     char_dim = 20         #每个字的维度
-    sentence_length = 6   #样本文本长度
+    sentence_length = 10   #样本文本长度，修改成 10
     vocab = build_vocab()       #建立字表
     model = build_model(vocab, char_dim, sentence_length)    #建立模型
     optim = torch.optim.Adam(model.parameters(), lr=0.005)   #建立优化器
@@ -141,7 +141,7 @@ def main():
 #最终预测
 def predict(model_path, vocab_path, input_strings):
     char_dim = 20  # 每个字的维度
-    sentence_length = 6  # 样本文本长度
+    sentence_length = 10  # 样本文本长度，修改成 10
     vocab = json.load(open(vocab_path, "r", encoding="utf8"))
     model = build_model(vocab, char_dim, sentence_length)    #建立模型
     model.load_state_dict(torch.load(model_path))       #加载训练好的权重
@@ -158,5 +158,5 @@ def predict(model_path, vocab_path, input_strings):
 
 if __name__ == "__main__":
     main()
-    # test_strings = ["abvxee", "casdfg", "rqweqg", "nlkdww"]
-    # predict("model.pth", "vocab.json", test_strings)
+    test_strings = ["abvxee1esd", "ca7sdfg4gk", "rqweqgpoiu", "nlkdwwmnbv"]
+    predict("model.pth", "vocab.json", test_strings)
