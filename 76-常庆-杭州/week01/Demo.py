@@ -59,7 +59,7 @@ def build_sample(vocab, sentence_length):
     #随机从字表选取sentence_length个字，可能重复
     x=np.random.choice(list(vocab.keys()),6)
     #指定哪些字出现时为正样本
-    m= set(x) & set("ac")   #修改正样本生成条件为：当同时出现ab字符时为正样本。由于生成正负样本比例失衡，训练过程重采样。
+    m= set(x) & set("ac")   #修改正样本生成条件为：当同时出现ab字符时为正样本。由于生成正负样本比例失衡，训练过程重采样。但是训练结果依旧很差
     n= [i for i in m]
     if len(n) == 2:
         y = 1
@@ -90,7 +90,23 @@ def build_model(vocab, char_dim, sentence_length):
 def evaluate(model, vocab, sample_length):
     model.eval()
     x, y = build_dataset(200, vocab, sample_length)   #建立200个用于测试的样本
-    print("本次预测集中共有%d个正样本，%d个负样本"%(sum(y), 200- sum(y)))
+    fu = []
+    zheng = []
+    for i, h in enumerate(y):
+        if h == 0:
+            fu.append(i)
+        else:
+            zheng.append(i)
+    index = random.sample(fu, len(y[y == 1])) #取出和正样本相同的负样本标签，使正负样本比例为1：1
+
+    x_zheng = x[np.array(zheng)]
+    for m in index:
+        zheng.append(m)
+    x = x[np.array(zheng)]
+    y = [[1]] * len(x_zheng) + [[0]] * len(index)
+    x = torch.LongTensor(x)
+    y = torch.FloatTensor(y)
+    print("本次预测集中共有%d个正样本，%d个负样本"%(sum(y), sum(y)))
     correct, wrong = 0, 0
     with torch.no_grad():
         y_pred = model(x)      #模型预测
@@ -107,8 +123,8 @@ def evaluate(model, vocab, sample_length):
 
 def main():
     epoch_num = 10        #训练轮数
-    batch_size = 20       #每次训练样本个数
-    train_sample = 1000   #每轮训练总共训练的样本总数
+    batch_size = 200       #每次训练样本个数
+    train_sample = 10000   #每轮训练总共训练的样本总数
     char_dim = 20         #每个字的维度
     sentence_length = 6   #样本文本长度
     vocab = build_vocab()       #建立字表
@@ -119,7 +135,7 @@ def main():
         model.train()
         watch_loss = []
         for batch in range(int(train_sample / batch_size)):  #进行50次喂入数据，然后求其平均loss
-            x, y = build_dataset(batch_size, vocab, sentence_length) #构建一组训练样本
+            x, y = build_dataset( batch_size, vocab, sentence_length) #构建一组训练样本
             fu = []  # 储存负样本对应的索引
             zheng = []  # 储存正样本对应的索引
             for i, h in enumerate(y):
