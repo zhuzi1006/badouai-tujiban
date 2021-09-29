@@ -1,0 +1,3 @@
+https://blog.csdn.net/sinat_28731575/article/details/90342082  pytorch中backward()函数详解
+https://blog.csdn.net/u011501388/article/details/84062483   PyTorch之前向传播函数forward
+https://blog.csdn.net/xiaoxifei/article/details/87797935   Pytorch optimizer.step() 和loss.backward()和scheduler.step()的关系与区别
