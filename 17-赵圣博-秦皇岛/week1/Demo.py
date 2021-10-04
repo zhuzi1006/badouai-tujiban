@@ -21,7 +21,7 @@ class TorchModel(nn.Module):
         self.pool = nn.MaxPool1d(sentence_length)
         self.classify = nn.Linear(input_dim, 1)
         self.activation = torch.sigmoid     #sigmoid做激活函数
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(0.5)
         self.loss = nn.functional.mse_loss  #loss采用均方差损失
 #定义网络层
 
