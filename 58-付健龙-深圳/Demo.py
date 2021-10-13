@@ -98,3 +98,7 @@ def evaluate(model, vocab, sample_length):
                 worng += 1
     print("正确预测个数：%d，正确率：%f" %(correct, correct/(correct+worng)))
     return correct/(correct+worng)
+
+
+if __name__ == "__main__":
+    main()
