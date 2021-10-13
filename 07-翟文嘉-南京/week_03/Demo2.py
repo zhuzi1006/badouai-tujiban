@@ -59,7 +59,7 @@ def build_sample(vocab, sentence_length):
     #随机从字表选取sentence_length个字，可能重复
     x = [random.choice(list(vocab.keys())) for _ in range(sentence_length)]
     #A类样本
-    if set("abcd") & set(x):
+    if set("1234567890") & set(x):
         y = 0
     #B类样本
     # elif not set("abc") & set(x) and set("xyz") & set(x):
@@ -155,8 +155,6 @@ def predict(model_path, vocab_path, input_strings):
         result = model.forward(torch.LongTensor(x))  #模型预测
     for i, input_string in enumerate(input_strings):
         print(0 if result[i] < 0.5 else 1, input_string, result[i]) #打印结果
-
-
 
 if __name__ == "__main__":
     main()
