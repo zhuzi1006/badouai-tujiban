@@ -100,5 +100,3 @@ def evaluate(model, vocab, sample_length):
     return correct/(correct+worng)
 
 
-if __name__ == "__main__":
-    main()
