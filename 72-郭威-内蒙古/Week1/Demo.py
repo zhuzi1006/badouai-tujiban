@@ -1,5 +1,5 @@
 #coding:utf8
-
+#学员郭威作业
 import torch
 import torch.nn as nn
 import numpy as np
