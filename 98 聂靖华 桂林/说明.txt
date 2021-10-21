@@ -1,0 +1,7 @@
+所有文件，我根据自己的想法，多加了一些注释
+CNN_prac 是练习的CNN程序
+Demo_prac是更改正样本生成条件后的程序，更改的地方不多，不是很理解
+DNN_prac是练习的DNN程序
+Drop_prac是练习的Dropout程序
+embedding_prac是练习的embedding程序
+RNN_prac是练习的RNN程序.
