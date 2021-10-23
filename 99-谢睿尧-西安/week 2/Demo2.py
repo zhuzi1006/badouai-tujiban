@@ -5,7 +5,7 @@ import torch.nn as nn
 import numpy as np
 import random
 import json
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 """
 
@@ -130,9 +130,9 @@ def main():
         print("=========\n第%d轮平均loss:%f" % (epoch + 1, np.mean(watch_loss)))
         acc = evaluate(model, vocab, sentence_length)   #测试本轮模型结果
         log.append([acc, np.mean(watch_loss)])
-    # plt.plot(range(len(log)), [l[0] for l in log])  #画acc曲线
-    # plt.plot(range(len(log)), [l[1] for l in log])  #画loss曲线
-    # plt.show()
+    plt.plot(range(len(log)), [l[0] for l in log])  #画acc曲线
+    plt.plot(range(len(log)), [l[1] for l in log])  #画loss曲线
+    plt.show()
     #保存模型
     torch.save(model.state_dict(), "model.pth")
     # 保存词表
@@ -161,5 +161,5 @@ def predict(model_path, vocab_path, input_strings):
 
 if __name__ == "__main__":
     main()
-    # test_strings = ["juvxee", "yrwfrg", "rbweqg", "nlhdww"]
-    # predict("model.pth", "vocab.json", test_strings)
+    test_strings = ["juvxee", "yrwfrg", "rbweqg", "nlhdww"]
+    predict("model.pth", "vocab.json", test_strings)
