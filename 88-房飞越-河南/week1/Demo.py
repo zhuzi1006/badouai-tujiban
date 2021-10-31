@@ -5,7 +5,7 @@ import torch.nn as nn
 import numpy as np
 import random
 import json
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 """
 
@@ -20,24 +20,23 @@ class TorchModel(nn.Module):
         super(TorchModel, self).__init__()
         self.embedding = nn.Embedding(len(vocab) + 1, input_dim)
         self.layer = nn.Linear(input_dim, input_dim)
-        self.pool = nn.AvgPool1d(sentence_length)
-        self.classify = nn.Linear(input_dim, 1)
+        self.pool = nn.MaxPool1d(sentence_length)
+        self.classify = nn.Linear(input_dim, 3)
         self.activation = torch.sigmoid     #sigmoid做激活函数
-        self.dropout = nn.Dropout(0.1)
-        self.loss = nn.functional.mse_loss  #loss采用均方差损失
-
+        self.dropout = nn.Dropout(0.4)
+        self.loss = nn.functional.cross_entropy  #loss采用均方差损失
 
     #当输入真实标签，返回loss值；无真实标签，返回预测值
     def forward(self, x, y=None):
-        x = self.embedding(x)  #input shape:(batch_size, sen_len)
-        x = self.layer(x)      #input shape:(batch_size, sen_len, input_dim)
+        x = self.embedding(x)  #input shape:(batch_size, sen_len) (10,6)
+        x = self.layer(x)      #input shape:(batch_size, sen_len, input_dim) (10,6,20)
         x = self.dropout(x)    #input shape:(batch_size, sen_len, input_dim)
         x = self.activation(x) #input shape:(batch_size, sen_len, input_dim)
         x = self.pool(x.transpose(1,2)).squeeze() #input shape:(batch_size, sen_len, input_dim)
-        x = self.classify(x)   #input shape:(batch_size, input_dim)
-        y_pred = self.activation(x)               #input shape:(batch_size, 1)
+        x = self.classify(x)   #input shape:(batch_size, input_dim)  (10,6)
+        y_pred = self.activation(x)               #input shape:(batch_size, 1) (10,1)
         if y is not None:
-            return self.loss(y_pred, y)
+            return self.loss(y_pred, y.squeeze())
         else:
             return y_pred
 
@@ -59,12 +58,15 @@ def build_vocab():
 def build_sample(vocab, sentence_length):
     #随机从字表选取sentence_length个字，可能重复
     x = [random.choice(list(vocab.keys())) for _ in range(sentence_length)]
-    #指定哪些字出现时为正样本
-    if set("ilovey") & set(x):
-        y = 1
-    #指定字都未出现，则为负样本
-    else:
+    #A类样本
+    if set("abc") & set(x) and not set("xyz") & set(x):
         y = 0
+    #B类样本
+    elif not set("abc") & set(x) and set("xyz") & set(x):
+        y = 1
+    #C类样本
+    else:
+        y = 2
     x = [vocab.get(word, vocab['unk']) for word in x]   #将字转换成序号，为了做embedding
     return x, y
 
@@ -77,7 +79,7 @@ def build_dataset(sample_length, vocab, sentence_length):
         x, y = build_sample(vocab, sentence_length)
         dataset_x.append(x)
         dataset_y.append([y])
-    return torch.LongTensor(dataset_x), torch.FloatTensor(dataset_y)
+    return torch.LongTensor(dataset_x), torch.LongTensor(dataset_y)
 
 #建立模型
 def build_model(vocab, char_dim, sentence_length):
@@ -88,24 +90,24 @@ def build_model(vocab, char_dim, sentence_length):
 #用来测试每轮模型的准确率
 def evaluate(model, vocab, sample_length):
     model.eval()
-    x, y = build_dataset(200, vocab, sample_length)   #建立200个用于测试的样本
-    print("本次预测集中共有%d个正样本，%d个负样本"%(sum(y), 200 - sum(y)))
+    total = 200 #测试样本数量
+    x, y = build_dataset(total, vocab, sample_length)   #建立200个用于测试的样本
+    y = y.squeeze()
+    print("A类样本数量：%d, B类样本数量：%d, C类样本数量：%d"%(y.tolist().count(0), y.tolist().count(1), y.tolist().count(2)))
     correct, wrong = 0, 0
     with torch.no_grad():
         y_pred = model(x)      #模型预测
         for y_p, y_t in zip(y_pred, y):  #与真实标签进行对比
-            if float(y_p) < 0.5 and int(y_t) == 0:
-                correct += 1   #负样本判断正确
-            elif float(y_p) >= 0.5 and int(y_t) == 1:
+            if int(torch.argmax(y_p)) == int(y_t):
                 correct += 1   #正样本判断正确
             else:
                 wrong += 1
-    print("正确预测个数：%d, 正确率：%f"%(correct, correct/(correct+wrong)))
+    print("正确预测个数：%d / %d, 正确率：%f"%(correct, total, correct/(correct+wrong)))
     return correct/(correct+wrong)
 
 
 def main():
-    epoch_num = 10        #训练轮数
+    epoch_num = 15        #训练轮数
     batch_size = 20       #每次训练样本个数
     train_sample = 1000   #每轮训练总共训练的样本总数
     char_dim = 20         #每个字的维度
@@ -127,9 +129,9 @@ def main():
         print("=========\n第%d轮平均loss:%f" % (epoch + 1, np.mean(watch_loss)))
         acc = evaluate(model, vocab, sentence_length)   #测试本轮模型结果
         log.append([acc, np.mean(watch_loss)])
-    plt.plot(range(len(log)), [l[0] for l in log])  #画acc曲线
-    plt.plot(range(len(log)), [l[1] for l in log])  #画loss曲线
-    plt.show()
+    # plt.plot(range(len(log)), [l[0] for l in log])  #画acc曲线
+    # plt.plot(range(len(log)), [l[1] for l in log])  #画loss曲线
+    # plt.show()
     #保存模型
     torch.save(model.state_dict(), "model.pth")
     # 保存词表
@@ -152,11 +154,11 @@ def predict(model_path, vocab_path, input_strings):
     with torch.no_grad():  #不计算梯度
         result = model.forward(torch.LongTensor(x))  #模型预测
     for i, input_string in enumerate(input_strings):
-        print(round(float(result[i])), input_string, result[i]) #打印结果
+        print(int(torch.argmax(result[i])), input_string, result[i]) #打印结果
 
 
 
 if __name__ == "__main__":
     main()
-    test_strings = ["woaini", "loveyi", "xhntsc", "ydannc"]
-    predict("model.pth", "vocab.json", test_strings)
+    # test_strings = ["ffycyw", "ylsmhg", "rbweqa", "nlpdww"]
+    # predict("model.pth", "vocab.json", test_strings)
