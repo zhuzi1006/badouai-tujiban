@@ -63,7 +63,7 @@ def sentences_to_vectors(sentences, model):
 
 def main():
     model = load_word2vec_model("model.w2v") #加载词向量模型
-    sentences = load_sentence("titles.txt")  #加载所有标题
+    sentences = load_sentence("/Users/wenjiazhai/Documents/GitHub/badouai-tujiban/07-翟文嘉-南京/week_04/titles.txt")  #加载所有标题
     vectors = sentences_to_vectors(sentences, model)   #将所有标题向量化
 
     n_clusters = int(math.sqrt(len(sentences)))  #指定聚类数量
