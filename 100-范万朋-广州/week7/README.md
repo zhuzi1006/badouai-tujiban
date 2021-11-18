@@ -6,4 +6,4 @@
 ![result1](https://github.com/DIO385/badouai-tujiban/blob/main/100-%E8%8C%83%E4%B8%87%E6%9C%8B-%E5%B9%BF%E5%B7%9E/week7/result1.png)
 ![result2](https://github.com/DIO385/badouai-tujiban/blob/main/100-%E8%8C%83%E4%B8%87%E6%9C%8B-%E5%B9%BF%E5%B7%9E/week7/result2.png)
 ![result3](https://github.com/DIO385/badouai-tujiban/blob/main/100-%E8%8C%83%E4%B8%87%E6%9C%8B-%E5%B9%BF%E5%B7%9E/week7/result3.png)
-![csv_result](https://github.com/DIO385/badouai-tujiban/blob/main/100-%E8%8C%83%E4%B8%87%E6%9C%8B-%E5%B9%BF%E5%B7%9E/week7/csv_result.png)
+![csv_result](https://github.com/DIO385/badouai-tujiban/blob/main/100-%E8%8C%83%E4%B8%87%E6%9C%8B-%E5%B9%BF%E5%B7%9E/week7/csv_result.jpg)
