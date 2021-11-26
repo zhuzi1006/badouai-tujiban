@@ -1,0 +1,17 @@
+model_path,train_data_path,valid_data_path,vocab_path,model_type,max_length,hidden_size,kernel_size,epoch,batch_size,optimizer,learning_rate,pretrain_model_path,result
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,cnn,20,128,3,10,64,adam,0.01,F:\pretrain_models\bert-base-chinese,0.6333333333333333
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,cnn,20,64,3,10,64,adam,0.01,F:\pretrain_models\bert-base-chinese,0.6166666666666667
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,cnn,20,128,3,10,64,adam,0.001,F:\pretrain_models\bert-base-chinese,0.6
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,cnn,20,64,3,10,64,adam,0.001,F:\pretrain_models\bert-base-chinese,0.525
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,gated_cnn,20,128,3,10,64,adam,0.01,F:\pretrain_models\bert-base-chinese,0.675
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,gated_cnn,20,64,3,10,64,adam,0.01,F:\pretrain_models\bert-base-chinese,0.6638888888888889
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,gated_cnn,20,128,3,10,64,adam,0.001,F:\pretrain_models\bert-base-chinese,0.6444444444444445
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,gated_cnn,20,64,3,10,64,adam,0.001,F:\pretrain_models\bert-base-chinese,0.575
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,lstm,20,128,3,10,64,adam,0.01,F:\pretrain_models\bert-base-chinese,0.7222222222222222
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,lstm,20,64,3,10,64,adam,0.01,F:\pretrain_models\bert-base-chinese,0.6861111111111111
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,lstm,20,128,3,10,64,adam,0.001,F:\pretrain_models\bert-base-chinese,0.6
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,lstm,20,64,3,10,64,adam,0.001,F:\pretrain_models\bert-base-chinese,0.4166666666666667
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,gru,20,128,3,10,64,adam,0.01,F:\pretrain_models\bert-base-chinese,0.6944444444444444
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,gru,20,64,3,10,64,adam,0.01,F:\pretrain_models\bert-base-chinese,0.6944444444444444
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,gru,20,128,3,10,64,adam,0.001,F:\pretrain_models\bert-base-chinese,0.6083333333333333
+output,../train_tag_news.json,../valid_tag_news.json,../chars.txt,gru,20,64,3,10,64,adam,0.001,F:\pretrain_models\bert-base-chinese,0.4
